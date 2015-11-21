@@ -45,6 +45,8 @@ public class Solution {
 		
 		System.out.println("Goods: " + good + ". Bads: " + bad + ". Accuracy: " + ((double)good/(good+bad) * 100) + "%");
 		*/
+		
+		
 	}
 
 	public static Patient[] loadPatients(File file) throws FileNotFoundException {

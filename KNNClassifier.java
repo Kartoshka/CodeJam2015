@@ -7,7 +7,7 @@ public class KNNClassifier{
 	
 	Patient[] trainData;
 	private int kNeighbours;
-	private LinkedList<Integer> relevantDataIndex = new LinkedList();
+	public LinkedList<Integer> relevantDataIndex = new LinkedList();
 	
 	//Set how many neighbours to pick
 	public KNNClassifier(int k)
