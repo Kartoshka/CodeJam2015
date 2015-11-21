@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class linearClassifier {
+public class LinearClassifier {
 
 	private static int NUM_PASSES = 10;
 	private static double LEARNING_RATE = 20;
