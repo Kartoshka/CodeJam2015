@@ -11,7 +11,7 @@ public class Solution {
 		
 		loadPatients();
 		
-		KNNClassifier classifier = new KNNClassifier(1);
+		KNNClassifier classifier = new KNNClassifier(10);
 		classifier.train(patients);
 		
 		int good = 0, bad = 0; 
