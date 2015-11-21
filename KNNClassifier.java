@@ -7,6 +7,7 @@ public class KNNClassifier{
 	
 	Patient[] trainData;
 	private int kNeighbours;
+	private LinkedList<Integer> relevantDataIndex = new LinkedList();
 	
 	//Set how many neighbours to pick
 	public KNNClassifier(int k)
@@ -86,4 +87,59 @@ public class KNNClassifier{
 
 	}
 
+	public void classifyUsefulData(Patient[] train)
+	{
+		//We split the patients into two classes
+		HashMap<Boolean, LinkedList<Patient>> resistanceMap = new HashMap();
+		resistanceMap.put(true,new LinkedList<Patient>());
+		resistanceMap.put(false,new LinkedList<Patient>());
+		for(Patient p: train)
+		{
+				resistanceMap.get(p.getClass(0)>0).push(p);
+		}
+		float[][] avgs = new float[2][train[0].testResults.length];
+		float[][] variance = new float[2][avgs.length];
+
+		for(int c=0;c<2;c++){
+		//We calculate the standard deviation of all data types for each class and pick small ones
+		//Calculate average
+		
+		for(int i=0; i<avgs[c].length;i++)
+		{
+			avgs[c][i] =0;
+		}
+		
+		for(int d=0; d<avgs[c].length;d++)
+		{
+			for(Patient p:resistanceMap.get(c==1))
+			{
+				avgs[c][d] += p.testResults[d];
+			}
+			avgs[c][d] /= train.length;
+		}
+		//Calculate variance
+		for(int i=0; i<avgs[c].length;i++)
+		{
+			variance[c][i] =0;
+		}
+		for(int d=0; d<avgs[c].length;d++)
+		{
+			for(Patient p:resistanceMap.get(c==1))
+			{
+				variance[c][d] += Math.pow((p.testResults[d]-avgs[c][d]),2);
+			}
+			variance[c][d] /= train.length;
+			variance[c][d] = (float)Math.sqrt(variance[c][d]);
+		}
+		
+		}
+		
+		for(int i=0; i<variance[0].length;i++)
+		{
+			if(variance[0][i] <5 && variance[1][i] <5)
+			{
+				relevantDataIndex.push(i);
+			}
+		}
+	}
 }
