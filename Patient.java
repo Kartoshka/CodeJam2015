@@ -4,9 +4,6 @@ public class Patient {
 	
 	public int ID;
 	public float[] testResults; //268 data results
-	
-
-	public Patient(int ID, float[] tests){
 
 	public boolean resistant;
 	public double remissionDuration;
