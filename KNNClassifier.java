@@ -14,12 +14,12 @@ public class KNNClassifier{
 		kNeighbours = k;
 	}
 	//Take in 
-	public void train(Patient[] trainingPatients, )
+	public void train(Patient[] trainingPatients)
 	{
 		trainData = trainingPatients;	
 	}
 	
-	public double classify(Patient p){
+	public double classify(Patient p,int classNum){
 		//Distances in first index, index of that neighbour in second index
 		LinkedList<Object[]> distances = new LinkedList<Object[]>();
 		
@@ -54,6 +54,7 @@ public class KNNClassifier{
 				distances.removeLast();
 			}		
 		}
+		//Unweighted voted
 		/*
 		HashMap<Boolean, LinkedList<Double>> classes = new HashMap();
 		classes.put(Boolean.TRUE,new LinkedList<Double>());
@@ -64,18 +65,18 @@ public class KNNClassifier{
 			classes.get(((Patient)compareArray[1]).resistant).add((Double)compareArray[0]);
 		}
 		return classes.get(true).size() > classes.get(false).size();*/
+		
+		//Weighted Vote
 		double result=0.0;
 		for(int i=kNeighbours-1; i>=0;i--){
 			Object[] compareArray =distances.get(i);
 			double distance = (Double)compareArray[0];
-			if(distance != 0){
-				if(((Patient)compareArray[1]).resistant)
-					result += (1/distance);
-				else
-					result -=(1/distance);
+			
+			if(distance != 0){		
+					result += (1/distance)*((Patient)compareArray[1]).getClass(classNum);
 			}
 			else
-				return ((Patient)compareArray[1]).resistant;
+				return ((Patient)compareArray[1]).getClass(classNum);
 		}
 		
 		return (result);
