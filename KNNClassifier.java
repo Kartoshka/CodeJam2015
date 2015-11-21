@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class KNNClassifier{
@@ -18,7 +19,7 @@ public class KNNClassifier{
 		trainData = trainingPatients;	
 	}
 	
-	public String classify(Patient p){
+	public void classify(Patient p){
 		//Distances in first index, index of that neighbour in second index
 		LinkedList<Object[]> distances = new LinkedList<Object[]>();
 		
@@ -53,18 +54,17 @@ public class KNNClassifier{
 				distances.removeLast();
 			}		
 		}
+		
+		HashMap<Boolean, LinkedList<Double>> classes = new HashMap();
+		classes.put(Boolean.TRUE,new LinkedList<Double>());
+		classes.put(Boolean.FALSE, new LinkedList<Double>());
+		
 		for(int i=kNeighbours-1; i>=0;i++){
 			Object[] compareArray =distances.get(i);
-			double compareDist = (double)(compareArray[0]);
-			if(distance<compareDist){
-				insertIndex = i;
-			}
+			classes.get(((Patient)compareArray[1]).resistant).add((Double)compareArray[0]);
 		}
-		
-		
-		return "";
-		
-		
+		p.resistant = classes.get(true).size() > classes.get(false).size();
+
 	}
 
 }
