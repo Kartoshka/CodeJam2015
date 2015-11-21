@@ -68,18 +68,21 @@ public class KNNClassifier{
 		
 		//Weighted Vote
 		double result=0.0;
+		double sumRecip = 0;
 		for(int i=kNeighbours-1; i>=0;i--){
 			Object[] compareArray =distances.get(i);
 			double distance = (Double)compareArray[0];
 			
-			if(distance != 0){		
-					result += (1/distance)*((Patient)compareArray[1]).getClass(classNum);
+			if(distance != 0){
+				double recip = 1/distance; //reciprocal of the distance
+				result += recip*((Patient)compareArray[1]).getClass(classNum);
+				sumRecip += recip;
 			}
 			else
 				return ((Patient)compareArray[1]).getClass(classNum);
 		}
 		
-		return (result);
+		return (result / sumRecip);
 
 	}
 
