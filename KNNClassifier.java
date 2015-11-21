@@ -19,7 +19,7 @@ public class KNNClassifier{
 		trainData = trainingPatients;	
 	}
 	
-	public void classify(Patient p){
+	public boolean classify(Patient p){
 		//Distances in first index, index of that neighbour in second index
 		LinkedList<Object[]> distances = new LinkedList<Object[]>();
 		
@@ -63,7 +63,7 @@ public class KNNClassifier{
 			Object[] compareArray =distances.get(i);
 			classes.get(((Patient)compareArray[1]).resistant).add((Double)compareArray[0]);
 		}
-		p.resistant = classes.get(true).size() > classes.get(false).size();
+		return classes.get(true).size() > classes.get(false).size();
 
 	}
 
