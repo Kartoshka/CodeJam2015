@@ -1,47 +1,54 @@
-import java.util.HashMap;
-import java.util.Map;
 
 public class LinearClassifier {
 
 	private static int NUM_PASSES = 10;
-	private static double LEARNING_RATE = 20;
+	private static float LEARNING_RATE = 0.00000005f;
 	
-	private int dimension;
-	private String[] classes;
-	private double[] theta;
+	private float[] theta = new float[265];
 	
 	
 	public void train(Patient[] data){
-		
 		//initialize theta with 0.5 in every value
 		for(int i=0; i<theta.length; i++){
 			theta[i] = 0.5f;
 		}
 		
-		double cost = 0;
-		
 		for(int i = 0; i < NUM_PASSES; i++) { //Do it n times to make sure it converged
-			for(int j=0; j<data.length; j++){		//for every patient
-				for(int k=0; k<data[j].testResults.length; k++){	//for every test result of this patient
+			for(int j = 0; j < data.length; j++){ //for every patient
+				
+				double cost = 0;
+				
+				for(int k = 0; k < theta.length; k++){ //for every test result of this patient
 					
-					double current = theta[k];
-					double gradient = 0, tempCost = 0;
+					float current = theta[k];
+					double gradient = 0;
 					
 					//calculate the gradient
-					data[j].testResults[k];
-					//Jerome pls halp!
+					gradient = (classify(data[j]) - data[j].resistant) * data[j].testResults[k]; //TODO change data[j].resistant
 					
 					gradient /= data.length;
 					
-					theta[k] = (current - LEARNING_RATE * gradient);
+					cost += Math.pow((classify(data[j]) - data[j].resistant), 2);
+					
+					if(!Double.isNaN(gradient))
+						System.out.println(gradient);
+					
+					theta[k] = (float) (current - LEARNING_RATE * gradient);
 				}
+				
+				//System.out.println(cost);
 			}
 		}
 		
 	}
 	
 	
-	public float classify(Patient[] data) {
+	public float classify(Patient p) {
+		float result = 0;
+		for(int i = 0; i < p.testResults.length; i++) {
+			result += p.testResults[i] * theta[i];
+		}
 		
+		return result;
 	}
 }

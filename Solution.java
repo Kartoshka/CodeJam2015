@@ -11,7 +11,9 @@ public class Solution {
 		
 		loadPatients();
 		
-		KNNClassifier classifier = new KNNClassifier(10);
+		//KNNClassifier classifier = new KNNClassifier(10);
+		//classifier.train(patients);
+		LinearClassifier classifier = new LinearClassifier();
 		classifier.train(patients);
 		
 		int good = 0, bad = 0; 
@@ -40,7 +42,7 @@ public class Solution {
 
 			int id = Integer.parseInt(input[i][0].substring(input[i][0].length() - 3, input[i][0].length()));
 			float[] finalInput = new float[input[i].length - 4];
-			boolean resistant = false;
+			double resistant = 0;
 			double remissionDuration = 0;
 			double survival = 0; // Survival time
 
@@ -96,7 +98,7 @@ public class Solution {
 						}
 						break;
 					case 265:
-						resistant = (input[i][j + 1].charAt(0) == 'R') ? true : false;
+						resistant = (input[i][j + 1].charAt(0) == 'R') ? 1 : -1;
 						break;
 					case 266:
 						if (input[i][j + 1].charAt(0) == 'N')
