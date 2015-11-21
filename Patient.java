@@ -31,7 +31,7 @@ public class Patient {
 	}
 	
 	public String toString() {
-		return "ID: " + ID + ": " + Arrays.toString(testResults);
+		return "ID: " + ID + ". Resistant: " + resistant + ". Rem_Duration: " + remissionDuration + ". Survival: " + survival + ". TestValues: " + Arrays.toString(testResults);
 	}
 
 }

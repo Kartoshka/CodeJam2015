@@ -8,7 +8,7 @@ public class Solution {
 		
 		Patient[] trainPatients = loadPatients(new File("trainingData.txt"));
 		
-		KNNClassifier classifier = new KNNClassifier(10);
+		KNNClassifier classifier = new KNNClassifier(3);
 		classifier.train(trainPatients);
 		
 		//LinearClassifier classifier = new LinearClassifier();
@@ -17,12 +17,12 @@ public class Solution {
 		Scanner in = new Scanner(System.in);
 		while(in.hasNext()) {
 			String s = "";
-			Patient p = loadPatient(in.nextLine());
+			Patient p = loadPatient(in.nextLine(), false);
 			
 			s += "train_id_" + p.ID + "\t";
 			
 			double a = classifier.classify(p, 0);
-			if(1 - a > 0)
+			if(a > 0)
 				s += "RESISTANT\t";
 			else
 				s += "COMPLETE_REMISSION\t";
@@ -40,6 +40,7 @@ public class Solution {
 				good++;
 			else
 				bad++;
+			System.out.println(trainPatients[i]);
 		}
 		
 		System.out.println("Goods: " + good + ". Bads: " + bad + ". Accuracy: " + ((double)good/(good+bad) * 100) + "%");
@@ -55,7 +56,7 @@ public class Solution {
 		Patient[] result = new Patient[166];
 
 		for (int i = 0; i < result.length; i++) {
-			result[i] = loadPatient(in.nextLine());
+			result[i] = loadPatient(in.nextLine(), true);
 		}
 		
 		in.close();
@@ -63,77 +64,76 @@ public class Solution {
 		return result;
 	}
 	
-	public static Patient loadPatient(String line) {
+	public static Patient loadPatient(String line, boolean isTrain) {
 		String[] input = line.split("\\s");
 
 		int id = Integer.parseInt(input[0].substring(input[0].length() - 3, input[0].length()));
-		float[] finalInput = new float[input.length - 4];
+		float[] finalInput = new float[input.length - ((isTrain)? 4: 1)];
 		double resistant = 0;
 		double remissionDuration = 0;
 		double survival = 0; // Survival time
 
-		for (int j = 0; j < input.length - 1; j++) {
-			char a = input[j].charAt(0);
-			if (j < 265 && '0' <= a && a <= '9')
-				finalInput[j] = Float.parseFloat(input[j]);
+		for (int j = 1; j < input.length; j++) {
+			if(input[j].length() == 0)
+				continue;
+			else if (j <= finalInput.length && '0' <= input[j].charAt(0) && input[j].charAt(0) <= '9')
+				finalInput[j - 1] = Float.parseFloat(input[j]);
 			else {
-				switch (j) {
+				switch (j - 1) {
 				case 0:
-					finalInput[j] = (input[j + 1].charAt(0) == 'F') ? 1 : 0;
+					finalInput[j - 1] = (input[j].charAt(0) == 'F') ? 1 : 0;
 					break;
 				case 3:
 				case 4:
 				case 5:
 				case 6:
-					char c = input[j + 1].charAt(0);
+					char c = input[j].charAt(0);
 					if (c == 'Y')
-						finalInput[j] = 1;
+						finalInput[j - 1] = 1;
 					else if (c == 'N')
-						finalInput[j] = 0;
+						finalInput[j - 1] = 0;
 					else // TODO NotDone (DNE)
-						finalInput[j] = 0;
+						finalInput[j - 1] = 0;
 					break;
 				case 7:
 				case 8:
 				case 9:
-					c = input[j + 1].charAt(1);
+					c = input[j].charAt(1);
 					if (c == 'O')
-						finalInput[j] = 1;
+						finalInput[j - 1] = 1;
 					else if (c == 'E')
-						finalInput[j] = 0;
+						finalInput[j - 1] = 0;
 					else // TODO NotDone (DNE)
-						finalInput[j] = 0;
+						finalInput[j - 1] = 0;
 					break;
 				case 10:
-					c = input[j + 1].charAt(0); // TODO shouldnt be
-													// values like 1, 2, 3,
-													// 4
+					c = input[j].charAt(0); // TODO shouldnt be values like 1, 2, 3, 4
 					switch (c) {
 					case 'A':
-						finalInput[j] = 1;
+						finalInput[j - 1] = 1;
 						break;
 					case 'S':
-						finalInput[j] = 2;
+						finalInput[j - 1] = 2;
 						break;
 					case 'F':
-						finalInput[j] = 3;
+						finalInput[j - 1] = 3;
 						break;
 					case 'H':
-						finalInput[j] = 4;
+						finalInput[j - 1] = 4;
 						break;
 					}
 					break;
 				case 265:
-					resistant = (input[j + 1].charAt(0) == 'R') ? 1 : -1;
+					resistant = (input[j].charAt(0) == 'R') ? 1 : -1;
 					break;
 				case 266:
-					if (input[j + 1].charAt(0) == 'N')
+					if (input[j].charAt(0) == 'N')
 						remissionDuration = -1;
 					else
-						remissionDuration = Double.parseDouble(input[j + 1]);
+						remissionDuration = Double.parseDouble(input[j]);
 					break;
 				case 267:
-					survival = Double.parseDouble(input[j + 1]);
+					survival = Double.parseDouble(input[j]);
 					break;
 				}
 			}
