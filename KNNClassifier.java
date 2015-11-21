@@ -98,7 +98,18 @@ public class KNNClassifier{
 				resistanceMap.get(p.getClass(0)>0).push(p);
 		}
 		float[][] avgs = new float[2][train[0].testResults.length];
-		float[][] variance = new float[2][avgs.length];
+		float[][] variance = new float[2][avgs[0].length];
+		float[] maxValue = new float[avgs[0].length];
+		for(int d =0; d<maxValue.length;d++)
+		{
+			maxValue[d] = Float.MIN_VALUE;
+		}
+		for(int d =0; d<maxValue.length;d++)
+		{
+			for(Patient p:train)
+				if(p.testResults[d] > maxValue[d])
+					maxValue[d] = p.testResults[d];
+		}
 
 		for(int c=0;c<2;c++){
 		//We calculate the standard deviation of all data types for each class and pick small ones
@@ -130,13 +141,14 @@ public class KNNClassifier{
 			}
 			variance[c][d] /= train.length;
 			variance[c][d] = (float)Math.sqrt(variance[c][d]);
+			variance[c][d] /= maxValue[d];
 		}
 		
 		}
 		
 		for(int i=0; i<variance[0].length;i++)
 		{
-			if(variance[0][i] <5 && variance[1][i] <5)
+			if(variance[0][i] <=0.15 && variance[1][i] <=0.15)
 			{
 				relevantDataIndex.push(i);
 			}
