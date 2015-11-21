@@ -19,6 +19,7 @@ public class KNNClassifier{
 	public void train(Patient[] trainingPatients)
 	{
 		trainData = trainingPatients;	
+		classifyUsefulData(trainingPatients);
 	}
 	
 	public double classify(Patient p,int classNum){
@@ -62,17 +63,6 @@ public class KNNClassifier{
 				distances.removeLast();
 			}		
 		}
-		//Unweighted voted
-		/*
-		HashMap<Boolean, LinkedList<Double>> classes = new HashMap();
-		classes.put(Boolean.TRUE,new LinkedList<Double>());
-		classes.put(Boolean.FALSE, new LinkedList<Double>());
-		
-		for(int i=kNeighbours-1; i>=0;i--){
-			Object[] compareArray =distances.get(i);
-			classes.get(((Patient)compareArray[1]).resistant).add((Double)compareArray[0]);
-		}
-		return classes.get(true).size() > classes.get(false).size();*/
 		
 		//Weighted Vote
 		double result=0.0;
