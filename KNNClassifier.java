@@ -41,7 +41,7 @@ public class KNNClassifier{
 			int insertIndex =-1;
 			//Compare the distance of the point with all the currently stored nearest neighbours
 			//The linked list is sorted in ascending order by the order in which we insert values.
-			for(int i=kNeighbours-1; i>=0;i++){
+			for(int i=kNeighbours-1; i>=0;i--){
 				Object[] compareArray =distances.get(i);
 				double compareDist = (double)(compareArray[0]);
 				if(distance<compareDist){
@@ -59,7 +59,7 @@ public class KNNClassifier{
 		classes.put(Boolean.TRUE,new LinkedList<Double>());
 		classes.put(Boolean.FALSE, new LinkedList<Double>());
 		
-		for(int i=kNeighbours-1; i>=0;i++){
+		for(int i=kNeighbours-1; i>=0;i--){
 			Object[] compareArray =distances.get(i);
 			classes.get(((Patient)compareArray[1]).resistant).add((Double)compareArray[0]);
 		}
