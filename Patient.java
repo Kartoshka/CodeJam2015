@@ -2,13 +2,11 @@
 public class Patient {
 	
 	public int ID;
-	public boolean sex; //False: Male True: Female
-	public float[] testResults; //269 data results
+	public float[] testResults; //268 data results
 	
-	public Patient(int ID, String Sex, float[] tests){
+	public Patient(int ID, float[] tests){
 		
 		this.ID =ID;
-		sex = Sex.equalsIgnoreCase("female");
 		testResults = tests;
 	}
 
