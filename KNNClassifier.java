@@ -14,12 +14,12 @@ public class KNNClassifier{
 		kNeighbours = k;
 	}
 	//Take in 
-	public void train(Patient[] trainingPatients)
+	public void train(Patient[] trainingPatients, )
 	{
 		trainData = trainingPatients;	
 	}
 	
-	public boolean classify(Patient p){
+	public double classify(Patient p){
 		//Distances in first index, index of that neighbour in second index
 		LinkedList<Object[]> distances = new LinkedList<Object[]>();
 		
@@ -78,7 +78,7 @@ public class KNNClassifier{
 				return ((Patient)compareArray[1]).resistant;
 		}
 		
-		return (result>0);
+		return (result);
 
 	}
 
