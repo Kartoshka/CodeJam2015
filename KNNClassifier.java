@@ -9,7 +9,7 @@ public class KNNClassifier{
 	private int kNeighbours;
 	
 	//Set how many neighbours to pick
-	public void KNNclassifier(int k)
+	public KNNClassifier(int k)
 	{
 		kNeighbours = k;
 	}
