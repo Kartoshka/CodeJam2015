@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class KNNClassifier{
@@ -34,10 +35,16 @@ public class KNNClassifier{
 		{
 			//Calculate distance
 			double distance =0.0;
-			
+			Iterator<Integer> relevantIndex =relevantDataIndex.iterator();
+			while(relevantIndex.hasNext())
+			{
+				int indexUse = relevantIndex.next();
+				distance+= Math.pow((train.testResults[indexUse] - p.testResults[indexUse]),2);
+			}
+			/*
 			for(int data =0; data<train.testResults.length;data++){
 				distance += Math.pow((train.testResults[data] - p.testResults[data]),2);
-			}
+			}*/
 			//Index at which the new data should be inserted
 			int insertIndex =-1;
 			//Compare the distance of the point with all the currently stored nearest neighbours
