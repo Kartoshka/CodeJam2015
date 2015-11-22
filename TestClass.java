@@ -6,6 +6,7 @@ public class TestClass {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
+		
 		Patient[] trainPatients = loadPatients(new File("trainingData.txt"));
 		
 		//KNNClassifier classifier = new KNNClassifier(3);

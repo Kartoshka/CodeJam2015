@@ -1,3 +1,6 @@
+import java.util.Arrays;
+
+import Jama.Matrix;
 
 public class LinearClassifierMatrix {
 	
@@ -72,17 +75,20 @@ public class LinearClassifierMatrix {
 		}
 		
 		//solve the matrix
-		double[] solution = solve(matrix, y);
+		Matrix m = new Matrix(matrix);
+		Matrix b = new Matrix(y, y.length);
+		double[] solution = (m.solve(b)).getColumnPackedCopy();
 		
 		//distribute the solution in theta and make the irrelevant thetas 0
 		this.theta = new double[3][r2.length];
 		int solCounter = 0;
-		for(int i=0; i<theta.length; i++){
+		for(int i=0; i<theta[category].length; i++){
 			if(relevantResults[solCounter] == i){
-				theta[3][i] = solution[solCounter];
+				theta[category][i] = solution[solCounter];
 				solCounter++;
 			}
 		}
+		System.out.println("Theta: " + Arrays.toString(theta[category]));
 		
 	}
 	
@@ -132,6 +138,8 @@ public class LinearClassifierMatrix {
         return r2;
 	}
 	
+	
+	/*
 	private static double[] solve(double[][] matrix, double[] vector){
 		
 		double[] solution = new double[matrix.length];
@@ -188,5 +196,5 @@ public class LinearClassifierMatrix {
 		
 		return det;
 	}
-	
+	*/
 }
