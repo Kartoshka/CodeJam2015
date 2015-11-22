@@ -2,7 +2,7 @@
 public class LinearClassifier2 {
 
 	private static int NUM_PASSES = 10;
-	private static float LEARNING_RATE = 0.00000005f;
+	private static float LEARNING_RATE = 0.0000005f;
 	
 	private float[] theta = new float[265];
 	

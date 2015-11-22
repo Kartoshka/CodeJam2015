@@ -1,74 +1,94 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Solution {
 
-	public static void main(String[] args) throws FileNotFoundException {
+public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
 		
-		Patient[] trainPatients = loadPatients(new File("trainingData.txt"));
+		Patient[] trainPatients = loadPatients(Solution.class.getResourceAsStream("trainingData.txt"), true);
+		Patient[] remissionPatients = filterPatients(trainPatients, false);
+		Patient[] resistantPatients = filterPatients(trainPatients, true);	
 		
-		KNNClassifier classifier = new KNNClassifier(3);
-		classifier.train(trainPatients);
+		KNNClassifier classifier1 = new KNNClassifier(3);
+		classifier1.train(trainPatients);
 		
-		//LinearClassifier classifier = new LinearClassifier();
-		//classifier.train(patients);
+		//Remission patients
+		KNNClassifier classifier2Rem = new KNNClassifier(10);
+		classifier2Rem.train(remissionPatients);
+		//Resistant patients
+		KNNClassifier classifier3Rem = new KNNClassifier(10);
+		classifier3Rem.train(remissionPatients);
+		KNNClassifier classifier3Res = new KNNClassifier(10);
+		classifier3Res.train(resistantPatients);
 		
+		System.out.print("Enter the absolute path to the test file: ");
 		Scanner in = new Scanner(System.in);
-		while(in.hasNext()) {
+		Patient[] testPatients = loadPatients(new FileInputStream(new File(in.nextLine())), false);
+		
+		for(Patient p: testPatients) {
 			String s = "";
-			Patient p = loadPatient(in.nextLine(), false);
-			
 			s += "train_id_" + p.ID + "\t";
 			
-			double a = classifier.classify(p, 0);
-			if(a > 0)
+			double a = classifier1.classify(p, 0);
+			if(a > 0){
 				s += "RESISTANT\t";
+				s += "NA" + "\t";
+				s += (classifier3Res.classify(p, 2)/11.5);
+			}
 			else
+			{
 				s += "COMPLETE_REMISSION\t";
-			
-			s += classifier.classify(p, 1) + "\n";
-			s += classifier.classify(p, 2);
+				s += (classifier2Rem.classify(p, 1)/5.0) + "\t";
+				s += (classifier3Rem.classify(p, 2)/11.5);
+				
+			}
 			
 			System.out.println(s);
 		}
+		
+		System.out.println("Press a key to exit...");
+		in.next();
 		in.close();
-		
-		/*int good = 0, bad = 0; 
-		for(int i = 0; i < trainPatients.length; i++) {
-			if(trainPatients[i].resistant == classifier.classify(trainPatients[i], 0))
-				good++;
-			else
-				bad++;
-			System.out.println(trainPatients[i]);
-		}
-		
-		System.out.println("Goods: " + good + ". Bads: " + bad + ". Accuracy: " + ((double)good/(good+bad) * 100) + "%");
-		*/
-		
 		
 	}
+	private static Patient[] filterPatients(Patient[] trainPatients, boolean b) {
+		
+		HashMap<Boolean, ArrayList<Patient>> filter = new HashMap<Boolean, ArrayList<Patient>>();
+		filter.put(true,new ArrayList<Patient>());
+		filter.put(false,new ArrayList<Patient>());
+		for(Patient p: trainPatients)
+			filter.get(p.getClass(0)>0).add(p);
 
-	public static Patient[] loadPatients(File file) throws FileNotFoundException {
+		return filter.get(b).toArray(new Patient[filter.get(b).size()]);
+	}
 
-		Scanner in = new Scanner(file);
-		in.nextLine(); // Skip the first two lines
-		in.nextLine();
-
-		Patient[] result = new Patient[166];
-
-		for (int i = 0; i < result.length; i++) {
-			result[i] = loadPatient(in.nextLine(), true);
+	public static Patient[] loadPatients(InputStream is, boolean isTrain) throws FileNotFoundException {
+		
+		Scanner in = new Scanner(is);
+		//in.nextLine();
+		//in.nextLine();
+		
+		ArrayList<Patient> result = new ArrayList<Patient>();
+		
+		while(in.hasNextLine()) {
+			String l = in.nextLine();
+			if(l.length() > 100)
+				result.add(loadPatient(l, isTrain));
 		}
 		
 		in.close();
-		
-		return result;
+		return result.toArray(new Patient[result.size()]);
 	}
 	
 	public static Patient loadPatient(String line, boolean isTrain) {
 		String[] input = line.split("\\s");
-
+		
 		int id = Integer.parseInt(input[0].substring(input[0].length() - 3, input[0].length()));
 		float[] finalInput = new float[input.length - ((isTrain)? 4: 1)];
 		double resistant = 0;

@@ -8,11 +8,26 @@ public class TestClass {
 		
 		Patient[] trainPatients = loadPatients(new File("trainingData.txt"));
 		
-		KNNClassifier classifier = new KNNClassifier(3);
-		classifier.train(trainPatients);
+		LinearClassifier3 classifier = new LinearClassifier3(trainPatients[0].testResults.length);
 		
-		//LinearClassifier classifier = new LinearClassifier();
-		//classifier.train(patients);
+		int numNRes = 0;
+		for(int i = 0; i < trainPatients.length; i++) {
+			if(trainPatients[i].resistant != 1)
+				numNRes++;
+		}
+		
+		float[][] data = new float[numNRes][trainPatients[0].testResults.length];
+		float[] labels = new float[numNRes];
+		
+		int temp = 0;
+		for(int i = 0; i < trainPatients.length; i++) {
+			if(trainPatients[i].resistant != 1) {
+				data[temp] = trainPatients[i].testResults;
+				labels[temp++] = (float) trainPatients[i].remissionDuration;
+			}
+		}
+		
+		classifier.train(data, labels);
 		
 		/*Scanner in = new Scanner(System.in);
 		while(in.hasNext()) {
@@ -21,33 +36,39 @@ public class TestClass {
 			
 			s += "train_id_" + p.ID + "\t";
 			
-			double a = classifier.classify(p, 0);
+			double a = classifier.classify(p);
 			if(a > 0)
 				s += "RESISTANT\t";
 			else
 				s += "COMPLETE_REMISSION\t";
 			
-			s += classifier.classify(p, 1) + "\n";
-			s += classifier.classify(p, 2);
+			//s += classifier.classify(p) + "\n";
+			//s += classifier.classify(p);
 			
 			System.out.println(s);
 		}
 		in.close();*/
 		
-		/*int good = 0, bad = 0; 
+		int good = 0, bad = 0; 
+		double accuracy = 0;
+		double num = 0;
 		for(int i = 0; i < trainPatients.length; i++) {
-			if(trainPatients[i].resistant == classifier.classify(trainPatients[i], 0))
+			if(trainPatients[i].resistant != 1) {
+				num++;
+				System.out.println(classifier.classify(trainPatients[i].testResults) + " " + (trainPatients[i].remissionDuration));
+				accuracy += Math.abs(classifier.classify(trainPatients[i].testResults) - trainPatients[i].remissionDuration) / (trainPatients[i].remissionDuration);
+			}
+			/*if(trainPatients[i].resistant * classifier.classify(trainPatients[i].testResults) > 0)
 				good++;
 			else
-				bad++;
-			System.out.println(trainPatients[i]);
+				bad++;*/
+			//System.out.println(trainPatients[i]);
 		}
+		System.out.println("Accuracy: " + (accuracy/num*100));
+		//System.out.println("Goods: " + good + ". Bads: " + bad + ". Accuracy: " + ((double)good/(good+bad) * 100) + "%");
 		
-		System.out.println("Goods: " + good + ". Bads: " + bad + ". Accuracy: " + ((double)good/(good+bad) * 100) + "%");
-		*/
 		
-		classifier.classifyUsefulData(trainPatients);
-		System.out.println(classifier.relevantDataIndex.get(2));
+		
 	}
 
 	public static Patient[] loadPatients(File file) throws FileNotFoundException {

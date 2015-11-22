@@ -1,7 +1,7 @@
 
 public class LinearClassifier {
 
-	private static int NUM_PASSES = 10;
+	private static int NUM_PASSES = 1000;
 	private static float LEARNING_RATE = 0.00000005f;
 	
 	private float[] theta = new float[265];
@@ -14,10 +14,8 @@ public class LinearClassifier {
 		}
 		
 		for(int i = 0; i < NUM_PASSES; i++) { //Do it n times to make sure it converged
-			for(int j = 0; j < data.length; j++){ //for every patient
-				
-				double cost = 0;
-				
+			double cost = 0;
+			for(int j = 0; j < data.length; j++){ //for every patient	
 				for(int k = 0; k < theta.length; k++){ //for every test result of this patient
 					
 					float current = theta[k];
@@ -28,16 +26,18 @@ public class LinearClassifier {
 					
 					gradient /= data.length;
 					
-					cost += Math.pow((classify(data[j]) - data[j].resistant), 2);
+					cost += Math.pow((classify(data[j]) - data[i].resistant), 2);
 					
-					if(!Double.isNaN(gradient))
-						System.out.println(gradient);
+					System.out.println(gradient + " " + classify(data[j]) + " " + data[j].resistant + " " + data[j].testResults[k]);
+					
+					//if(!Double.isNaN(gradient))
+						//System.out.println(gradient);
 					
 					theta[k] = (float) (current - LEARNING_RATE * gradient);
 				}
-				
-				//System.out.println(cost);
 			}
+			
+			//System.out.println(cost);
 		}
 		
 	}
